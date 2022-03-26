@@ -1,5 +1,4 @@
-import React, { Component } from "react";
-import Book from "../Book";
+import React from "react";
 import { Link } from "react-router-dom";
 import * as BooksAPI from "../BooksAPI";
 import { bookShelfTitle } from "../common/constants";
