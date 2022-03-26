@@ -1,20 +1,28 @@
 import React, { Component } from "react";
 import { update } from "./BooksAPI";
 
+// import React, { Component } from 'react'
+
+// export default class ShelfChanger extends Component {
+//     const { book, shelf, changeShelf } = this.props;
+//   render() {
+//     return (
+//       <div>
+
+//       </div>
+//     )
+//   }
+// }
+
 class ShelfChanger extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      readingOptions: {
-        currentlyReading: "Currently Reading",
-        wantToRead: "Want to Read",
-        read: "Read",
-        none: "None"
-      },
-      book: props.book,
-      shelf: props.shelf
-    };
-  }
+  state = {
+    shelves: {
+      currentlyReading: "Currently Reading",
+      wantToRead: "Want to Read",
+      read: "Read",
+      none: "None",
+    },
+  };
 
   handleChange = (book, option) => {
     this.setState({ shelf: option });
@@ -26,19 +34,20 @@ class ShelfChanger extends Component {
   };
 
   render() {
-    const { book, readingOptions, shelf } = this.state;
+    const { shelves } = this.state;
+    const { book, shelf } = this.props;
     return (
       <div className="book-shelf-changer">
         <select
-          onChange={event => this.handleChange(book, event.target.value)}
+          onChange={(event) => this.handleChange(book, event.target.value)}
           value={shelf}
         >
           <option value="move" disabled>
             Move to...
           </option>
-          {Object.keys(readingOptions).map(optionValue => (
-            <option key={optionValue} value={optionValue}>
-              {readingOptions[optionValue]}
+          {Object.keys(shelves).map((value) => (
+            <option key={value} value={value}>
+              {shelves[value]}
             </option>
           ))}
         </select>
