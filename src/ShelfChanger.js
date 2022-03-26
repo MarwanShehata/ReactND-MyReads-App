@@ -9,10 +9,10 @@ class ShelfChanger extends Component {
         currentlyReading: "Currently Reading",
         wantToRead: "Want to Read",
         read: "Read",
-        none: "None"
+        none: "None",
       },
       book: props.book,
-      shelf: props.shelf
+      shelf: props.shelf,
     };
   }
 
@@ -30,13 +30,13 @@ class ShelfChanger extends Component {
     return (
       <div className="book-shelf-changer">
         <select
-          onChange={event => this.handleChange(book, event.target.value)}
+          onChange={(event) => this.handleChange(book, event.target.value)}
           value={shelf}
         >
           <option value="move" disabled>
             Move to...
           </option>
-          {Object.keys(readingOptions).map(optionValue => (
+          {Object.keys(readingOptions).map((optionValue) => (
             <option key={optionValue} value={optionValue}>
               {readingOptions[optionValue]}
             </option>

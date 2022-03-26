@@ -1,33 +1,54 @@
 import React, { Component } from "react";
 import Book from "../Book";
 import { Link } from "react-router-dom";
-import { getAll } from "../BooksAPI";
-import { bookShelfTitle } from "../common/common";
+import * as BooksAPI from "../BooksAPI";
+import { bookShelfTitle } from "../common/constants";
 
-class HomePage extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      shelvedBooks: [],
-      error: false,
-    };
-
-    getAll()
-      .then((response) =>
-        this.setState({ shelvedBooks: response, error: false })
-      )
-      .catch((error) => this.setState({ error: true }));
-  }
-
-  refreshShelves = () => {
-    getAll()
-      .then((response) =>
-        this.setState({ shelvedBooks: response, error: false })
-      )
-      .catch((error) => this.setState({ error: true }));
+class HomePage extends React.Component {
+  state = {
+    shelvedBooks: [],
+    error: false,
+    books: [],
   };
+
+  // getAll() method returns a promise, so we can use async/await
+  async componentDidMount() {
+    // I tried to add the update function to the componentDidMount method, but it didn't work.
+    // Can't figure out why.
+    // Isn't all promises and async functions must be handled in the componentDidMount method?
+    // So instead I broke it into separate methods outside of the componentDidMount method (changeShelf)
+    try {
+      const books = await BooksAPI.getAll();
+      // the metadata is already converted to JSON, so we don't need to convert it again
+      // I downloaded the response using postman and saved it as a JSON file called "response.json" just to visualize it
+      this.setState({ books, error: false });
+    } catch (error) {
+      this.setState({ error: true });
+      // handling errors from the API call here
+    }
+  }
+  changeShelf = (book, shelf) => {
+    if (this.state.error !== true) {
+      BooksAPI.update({ id: book.id }, shelf).then((metaData) => {
+        if (metaData) {
+          this.setState((state) => ({
+            books: state.books.map((mappedBook) => {
+              if (mappedBook.id === book.id) {
+                mappedBook.shelf = shelf;
+              }
+              // we can instead use Object.assign({}, mappedBook, { shelf: shelf })
+              // or filter the books array and chaining it with concat
+              return mappedBook;
+            }),
+          }));
+        }
+      });
+    }
+  };
+
   render() {
-    const { shelvedBooks, error } = this.state;
+    const { shelvedBooks, error, books } = this.state;
+    const { changeShelf } = this;
     const shelvesForSearch = Object.keys(shelvedBooks).map((book) => {
       return { id: shelvedBooks[book].id, shelf: shelvedBooks[book].shelf };
     });
@@ -41,33 +62,98 @@ class HomePage extends Component {
         </div>
         <div className="list-books-content">
           {Object.keys(bookShelfTitle)
-            .filter((shelf) => shelf !== "none")
+            .filter((shelfTitle) => shelfTitle !== "none")
             .map(
-              (shelfName) => (
-                <div className="bookshelf" key={shelfName}>
+              (shelfMapped) => (
+                <div className="bookshelf" key={shelfMapped}>
                   {/* just before the BookList component */}
                   <h2 className="bookshelf-title">
-                    {bookShelfTitle[shelfName]}
+                    {bookShelfTitle[shelfMapped]}
                   </h2>
                   <div className="bookshelf-books">
                     <ol className="books-grid">
-                      {shelvedBooks
-                        .filter((book) => book.shelf === shelfName)
-                        .map(
-                          (book) => (
-                            <li key={book.id}>
-                              <Book
-                                book={book}
-                                title={book.title}
-                                authors={book.authors}
-                                thumbnail={book.imageLinks.thumbnail}
-                                refreshShelves={this.refreshShelves}
-                                shelf={book.shelf}
-                              />
-                            </li>
-                          ) //end of JSX
-                        ) //end of map
-                      }
+                      {// This iterates through the bookShelfTitle object and renders a BooksList component for each shelf while filtering out the "none" shelf
+                      Object.keys(bookShelfTitle)
+                        .filter((shelf) => shelf !== "none")
+                        .map((bookShelfName) => (
+                          <div key={bookShelfName}>
+                            <div className="bookshelf" key={bookShelfName}>
+                              <h2 className="bookshelf-title">
+                                {bookShelfTitle[bookShelfName]}
+                              </h2>
+                              <div className="bookshelf-books">
+                                <ol className="books-grid">
+                                  {books
+                                    .filter(
+                                      (bookName) =>
+                                        bookName.shelf === bookShelfName
+                                    )
+                                    .map((bookName) => (
+                                      <li key={bookName.id}>
+                                        <div className="book">
+                                          <div className="book-top">
+                                            <a href={bookName.previewLink}>
+                                              <div
+                                                className="book-cover"
+                                                style={{
+                                                  width: 128,
+                                                  height: 193,
+                                                  backgroundImage:
+                                                    bookName.imageLinks &&
+                                                    bookName.imageLinks
+                                                      .thumbnail
+                                                      ? `url(${
+                                                          bookName.imageLinks
+                                                            .thumbnail
+                                                        })`
+                                                      : `url("https://loremflickr.com/128/193")`, // Or we can use a placeholder image from the web app's server
+                                                }}
+                                              />
+                                            </a>
+                                            <div className="book-shelf-changer">
+                                              <select
+                                                value={bookName.shelf}
+                                                onChange={(event) =>
+                                                  changeShelf(
+                                                    bookName,
+                                                    event.target.value
+                                                  )
+                                                }
+                                              >
+                                                <option value="move" disabled>
+                                                  Move to...
+                                                </option>
+                                                <option value="currentlyReading">
+                                                  Currently Reading
+                                                </option>
+                                                <option value="wantToRead">
+                                                  Want to Read
+                                                </option>
+                                                <option value="read">
+                                                  Read
+                                                </option>
+                                                <option value="none">
+                                                  None
+                                                </option>
+                                              </select>
+                                            </div>
+                                          </div>
+                                          <div className="book-title">
+                                            {bookName.title || ""}
+                                          </div>
+                                          <div className="book-authors">
+                                            {(bookName.authors &&
+                                              bookName.authors.join(", ")) ||
+                                              ""}
+                                          </div>
+                                        </div>
+                                      </li>
+                                    ))}
+                                </ol>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
                       {/*end of inner block*/}
                     </ol>
                   </div>

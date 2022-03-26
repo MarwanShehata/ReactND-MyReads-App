@@ -15,9 +15,9 @@ const Book = ({ book, title, authors, thumbnail, refreshShelves, shelf }) => {
           style={{
             width: 128,
             height: 193,
-            backgroundImage: `url(${thumb})`
+            backgroundImage: `url(${thumb})`,
           }}
-        ></div>
+        />
         {refreshShelves ? (
           <ShelfChanger
             book={book}
