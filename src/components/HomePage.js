@@ -28,20 +28,22 @@ class HomePage extends React.Component {
   }
   changeShelf = (book, shelf) => {
     if (this.state.error !== true) {
-      BooksAPI.update({ id: book.id }, shelf).then((metaData) => {
-        if (metaData) {
-          this.setState((state) => ({
-            books: state.books.map((mappedBook) => {
-              if (mappedBook.id === book.id) {
-                mappedBook.shelf = shelf;
-              }
-              // we can instead use Object.assign({}, mappedBook, { shelf: shelf })
-              // or filter the books array and chaining it with concat
-              return mappedBook;
-            }),
-          }));
+      BooksAPI.update({ id: book.id, shelf: book.shelf }, shelf).then(
+        (metaData) => {
+          if (metaData) {
+            this.setState((state) => ({
+              books: state.books.map((mappedBook) => {
+                if (mappedBook.id === book.id) {
+                  mappedBook.shelf = shelf;
+                }
+                // we can instead use Object.assign({}, mappedBook, { shelf: shelf })
+                // or filter the books array and chaining it with concat
+                return mappedBook;
+              }),
+            }));
+          }
         }
-      });
+      );
     }
   };
 
