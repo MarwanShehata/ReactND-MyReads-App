@@ -135,8 +135,15 @@ class SearchBooks extends Component {
                   book={book}
                   title={book.title}
                   authors={book.authors}
-                  thumbnail={book.imageLinks.thumbnail}
-                  shelf={this.getShelfName(book)}
+                  thumbnail={
+                    book.imageLinks && book.imageLinks.thumbnail
+                      ? `url(${book.imageLinks.thumbnail})`
+                      : `url("https://loremflickr.com/128/193")`
+                  }
+                  shelf={
+                    book.shelf ? book.shelf : this.getShelfName(book)
+                    // this.getShelfName(book) ? this.getShelfName(book) : "none"
+                  }
                 />
               ))}
           </ol>

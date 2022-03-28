@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import ShelfChanger from "./ShelfChanger";
+import ShelfChanger from "../src/ShelfChanger";
 import * as BooksAPI from "./BooksAPI";
 
 export default class Book extends Component {
@@ -35,10 +35,13 @@ export default class Book extends Component {
             <ShelfChanger
               book={book}
               refreshShelves={this.shelfSetter}
-              shelf={shelf}
+              shelf={book.shelf ? book.shelf : "none"}
             />
           ) : (
-            <ShelfChanger book={book} shelf={shelf} />
+            <ShelfChanger
+              book={book}
+              shelf={book.shelf ? book.shelf : "none"}
+            />
           )}
         </div>
         <div className="book-title">{title}</div>
