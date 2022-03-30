@@ -10,8 +10,17 @@ export default class Book extends Component {
   // getAll() method returns a promise, so we can use async/await
   shelfSetter = () => {
     BooksAPI.getAll()
-      .then((response) => this.setState({ books: response, error: false }))
-      .catch((error) => this.setState({ error: true }));
+      .then((response) =>
+        this.setState({
+          books: response,
+          error: false,
+        })
+      )
+      .catch((error) =>
+        this.setState({
+          error: true,
+        })
+      );
   };
   render() {
     const { book, title, authors, shelf } = this.props;
@@ -30,7 +39,7 @@ export default class Book extends Component {
                   ? `url(${book.imageLinks.thumbnail})`
                   : `url("https://loremflickr.com/128/193")`, // Or we can use a placeholder image from the web app's server
             }}
-          />
+          />{" "}
           {this.shelfSetter ? (
             <ShelfChanger
               book={book}
@@ -42,10 +51,10 @@ export default class Book extends Component {
               book={book}
               shelf={book.shelf ? book.shelf : "none"}
             />
-          )}
-        </div>
-        <div className="book-title">{title}</div>
-        <div className="book-authors">{authorList.join(", ")}</div>
+          )}{" "}
+        </div>{" "}
+        <div className="book-title"> {title} </div>{" "}
+        <div className="book-authors"> {authorList.join(", ")} </div>{" "}
       </div>
     );
   }

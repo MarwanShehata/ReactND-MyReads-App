@@ -6,7 +6,7 @@ import Book from "../Book";
 class SearchBooks extends Component {
   state = {
     queryInput: "",
-    books: [],
+    books: [], //shelvedBooks
     query: "" /* this should be remove */,
     searchedBooks: [],
   };
