@@ -26,6 +26,7 @@ class HomePage extends React.Component {
       // handling errors from the API call here
     }
   }
+  
   changeShelf = (book, shelf) => {
     if (this.state.error !== true) {
       BooksAPI.update({ id: book.id, shelf: book.shelf }, shelf).then(

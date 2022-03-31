@@ -8,22 +8,23 @@ export default class Book extends Component {
   // Isn't all promises and async functions must be handled in the componentDidMount method?
   // So instead I broke it into separate methods outside of the componentDidMount method (changeShelf)
   // getAll() method returns a promise, so we can use async/await
-  shelfSetter = () => {
-    BooksAPI.getAll()
-      .then((response) =>
-        this.setState({
-          books: response,
-          error: false,
-        })
-      )
-      .catch((error) =>
-        this.setState({
-          error: true,
-        })
-      );
-  };
+
+  // shelfSetter = () => {
+  //   BooksAPI.getAll()
+  //     .then((response) =>
+  //       this.setState({
+  //         books: response,
+  //         error: false,
+  //       })
+  //     )
+  //     .catch((error) =>
+  //       this.setState({
+  //         error: true,
+  //       })
+  //     );
+  // };
   render() {
-    const { book, title, authors, shelf } = this.props;
+    const { book, title, authors, shelf, booksStateUpdate } = this.props;
     const authorList = authors ? authors : ["Author Unknown"];
 
     return (
@@ -40,19 +41,25 @@ export default class Book extends Component {
                   : `url("https://loremflickr.com/128/193")`, // Or we can use a placeholder image from the web app's server
             }}
           />{" "}
-          {this.shelfSetter ? (
+          {!booksStateUpdate ? (
             <ShelfChanger
               book={book}
-              refreshShelves={this.shelfSetter}
-              shelf={book.shelf ? book.shelf : "none"}
+              refreshShelves={booksStateUpdate}
+              shelf={
+                /* book.shelf ? book.shelf : "none" */
+                shelf
+              }
             />
           ) : (
             <ShelfChanger
               book={book}
-              shelf={book.shelf ? book.shelf : "none"}
+              shelf={
+                /* book.shelf ? book.shelf : "none" */
+                shelf
+              }
             />
-          )}{" "}
-        </div>{" "}
+          )}
+        </div>
         <div className="book-title"> {title} </div>{" "}
         <div className="book-authors"> {authorList.join(", ")} </div>{" "}
       </div>

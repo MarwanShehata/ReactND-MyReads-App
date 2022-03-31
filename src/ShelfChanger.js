@@ -1,19 +1,6 @@
 import React, { Component } from "react";
 import { update } from "../src/BooksAPI";
 
-// import React, { Component } from 'react'
-
-// export default class ShelfChanger extends Component {
-//     const { book, shelf, changeShelf } = this.props;
-//   render() {
-//     return (
-//       <div>
-
-//       </div>
-//     )
-//   }
-// }
-
 class ShelfChanger extends Component {
   state = {
     shelves: {
@@ -22,7 +9,7 @@ class ShelfChanger extends Component {
       read: "Read",
       none: "None",
     },
-  };
+  };    
 
   handleChange = (book, option) => {
     this.setState({ shelf: option });
