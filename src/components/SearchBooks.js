@@ -19,7 +19,26 @@ class SearchBooks extends Component {
           if (books.id === (null || undefined)) {
             this.setState({ searchedBooks: [] });
           } else {
-            this.setState({ searchedBooks: books });
+            const updatedBooks = books.map((book) => {
+              return {
+                ...book,
+                shelf: book.shelf ? book.shelf : "none",
+
+                //!!  shelf: function(book) {
+                //?   const result = this.state.searchedBooks.filter(
+                //?     (shelvedBook) => shelvedBook.id === book.id
+                //?   );
+                //?   return result.length !== 0 ? result[0].shelf : "none";
+                //? },
+
+                //!! shelf: books.find((b) => (b.id === book.id ? b.shelf : "none")),
+
+                //!! shelf: books.find((b) => b.id === book.id)
+                //?   ? books.find((b) => b.id === book.id).shelf
+                //?   : "none",
+              };
+            });
+            this.setState({ searchedBooks: updatedBooks });
           }
         } catch (error) {
           console.log(
