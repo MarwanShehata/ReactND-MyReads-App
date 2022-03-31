@@ -20,29 +20,39 @@ class SearchBooks extends Component {
             this.setState({ searchedBooks: [] });
           } else {
             const updatedBooks = books.map((book) => {
-              return {
-                ...book,
-                shelf: book.shelf ? book.shelf : "none",
+              const found = this.state.searchBooks.find(
+                (b) => b.id === book.id
+              );
+              if (found) {
+                book.shelf = found.shelf;
+              } else {
+                book.shelf = "none";
+              }
+              return book;
 
-                //!!  shelf: function(book) {
-                //?   const result = this.state.searchedBooks.filter(
-                //?     (shelvedBook) => shelvedBook.id === book.id
-                //?   );
-                //?   return result.length !== 0 ? result[0].shelf : "none";
-                //? },
+              // return {
+              //   ...book,
+              //   shelf: book.shelf ? book.shelf : "none",
 
-                //!! shelf: books.find((b) => (b.id === book.id ? b.shelf : "none")),
+              //   //!!  shelf: function(book) {
+              //   //?   const result = this.state.searchedBooks.filter(
+              //   //?     (shelvedBook) => shelvedBook.id === book.id
+              //   //?   );
+              //   //?   return result.length !== 0 ? result[0].shelf : "none";
+              //   //? },
 
-                //!! shelf: books.find((b) => b.id === book.id)
-                //?   ? books.find((b) => b.id === book.id).shelf
-                //?   : "none",
-              };
+              //   //!! shelf: books.find((b) => (b.id === book.id ? b.shelf : "none")),
+
+              //   //!! shelf: books.find((b) => b.id === book.id)
+              //   //?   ? books.find((b) => b.id === book.id).shelf
+              //   //?   : "none",
+              // };
             });
             this.setState({ searchedBooks: updatedBooks });
           }
         } catch (error) {
           console.log(
-            "error retriving searched data. Please check your API request. Source: Search.js",
+            "error retriving searched data. Please check your API request. Source: Search.js\n",
             error
           );
         }
@@ -80,7 +90,7 @@ class SearchBooks extends Component {
       BooksAPI.update({ id: book.id }, shelf).then((metaData) => {
         if (metaData) {
           this.setState((state) => ({
-            books: state.books.map((mappedBook) => {
+            books: this.state.searchedBooks.map((mappedBook) => {
               if (mappedBook.id === book.id) {
                 mappedBook.shelf = shelf;
               }
