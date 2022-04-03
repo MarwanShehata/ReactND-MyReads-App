@@ -110,7 +110,11 @@ class SearchBooks extends Component {
     if (query !== "") {
       BooksAPI.search(query).then((response) => {
         if (!response.error) {
-          this.setState({ books: response });
+          const updatedBooks = response.map((book) => {
+            const bookShelf = this.props.books.find((b) => b.id === book.id);
+            return { ...book, shelf: bookShelf ? bookShelf.shelf : "none" };
+          });
+          this.setState({ books: updatedBooks });
         } else {
           this.setState({ books: [] });
         }
@@ -119,6 +123,20 @@ class SearchBooks extends Component {
       this.setState({ books: [] });
     }
   };
+  // searchBooks = (query) => {
+  //   if (query !== "") {
+  //     BooksAPI.search(query).then((response) => {
+  //       if (!response.error) {
+  //         // Comparing books in the response with the books from main page and updating the shelf
+  //         this.setState({ books: response });
+  //       } else {
+  //         this.setState({ books: [] });
+  //       }
+  //     });
+  //   } else {
+  //     this.setState({ books: [] });
+  //   }
+  // };
 
   handleChange = (newQuery) => {
     this.setState({ query: newQuery });
@@ -182,8 +200,8 @@ class SearchBooks extends Component {
 
                       // this.getShelfName(book) ? this.getShelfName(book) : "none"
 
-                      this.getShelfName(book)
-                      // book.shelf
+                      // this.getShelfName(book)
+                      book.shelf
                     }
                     booksStateUpdate={booksStateUpdate}
                   />
